@@ -1,28 +1,37 @@
 
+
+from generator import add_new_person
 from selenium.webdriver.common.by import By
-from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from conftest import driver
+from tests.locators import Registration_form_locators
+
+# URL page of redistration
+URL_REGISTER ='https://stellarburgers.nomoreparties.site/register'
 
 class TestRegistration:
 
     def test_registration(self, driver):
-        driver.get('https://stellarburgers.nomoreparties.site/register')
+        driver.get(URL_REGISTER)
+        person_info = add_new_person()
+        firstname = person_info[0]
+        email = person_info[1]
+        password = person_info[2]
+
+
         # Найди поле "Имя" и заполни его
-        driver.find_element(By.XPATH, "//*[@id='root']/div[1]/main[1]/div[1]/form[1]/fieldset[1]/div[1]/div[1]/input[1]").send_keys('Liaisian')
+        driver.find_element(*Registration_form_locators.NAME_FIELD).send_keys(firstname)
 
          # Найди поле "Email" и заполни его
-        driver.find_element(By.XPATH, "//*[@id='root']/div[1]/main[1]/div[1]/form[1]/fieldset[2]/div[1]/div[1]/input[1]").send_keys('liaisianzalotdinova9999@yandex.ru')
+        driver.find_element(*Registration_form_locators.EMAIL_FIELD).send_keys(email)
 
         # Найди поле "Пароль" и заполни его
-        driver.find_element(By.XPATH, "//*[@id='root']/div[1]/main[1]/div[1]/form[1]/fieldset[3]/div[1]/div[1]/input[1]").send_keys('4550')
+        driver.find_element(*Registration_form_locators.PASSWORD_FIELD).send_keys(password)
 
         # Нажми на кнопку "Зарегистрироваться" и кликни по ней
-        driver.find_element (By.XPATH, "//*[contains(@class,'button_button_size_medium')]").click()
+        driver.find_element(*Registration_form_locators.BUTTON_REGISTRATION).click()
 
         # Проверяем, что в сообщении об ошибке текст 'Некорректный пароль'
-        assert driver.find_element (By.XPATH,".//fieldset[3]/div/p").text == 'Некорректный пароль'
+        assert driver.find_element (By.CLASS_NAME,"input__error text_type_main-default").text == 'Некорректный пароль'
 
-        driver.quit()
+
 

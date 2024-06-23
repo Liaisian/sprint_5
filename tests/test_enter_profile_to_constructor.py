@@ -3,43 +3,43 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from conftest import driver
+from locators import Header_locators
+
 
 class TestEnterToConstructor:
     # переход из личного кабинета в конструктор
     def test_positive_enter_from_personal_profile_to_constructor(self, driver):
-        driver = webdriver.Chrome()
-        driver.get("https://stellarburgers.nomoreparties.site/")
-        driver.find_element(By.XPATH, "//section[2]/div/button").click()
+        # Авторизация
+        # Ожидание и нажатие кнопки входа в аккаунт из главной страницы
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(*Main_page_locators.SIGN_IN_BUTTON)).click()
 
-        # Явное ожидание появления поля ввода email
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//fieldset[1]/div/div/input")))
+        # Ожидание и ввод email на странице авторизации
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(*Login_form_locators.EMAIL_FIELD).send_keys(
+            'liaisianzalotdinova9999@yandex.ru')
 
-        # Вводим имя и пароль
-        driver.find_element(By.XPATH, "//fieldset[1]/div/div/input").send_keys('liaisianzalotdinova9999@yandex.ru')
+        # Ожидание и ввод пароля на странице авторизации
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(*Login_form_locators.PASSWORD_FIELD).send_keys('T@ig@1507')
 
-        # Вводим пароль
-        driver.find_element(By.XPATH, "//fieldset[2]/div[1]/div[1]/input[1]").send_keys('T@ig@1507')
-
-        # нажимаем на вход
-        driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/main[1]/div[1]/form[1]/button[1]').click()
+        # Ожидание и нажатие на кнопку входа на странице авторизации
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(*Login_form_locators.SIGN_IN_BUTTON).click()
 
         # Явное ожидание загрузки страницы входа в аккаунт
         WebDriverWait(driver, 10).until(EC.url_to_be("https://stellarburgers.nomoreparties.site/"))
 
         # нажимаем на кнопку личный кабинет
-        driver.find_element(By.XPATH, "//html/body/div/div/header/nav/a/p").click()
+        driver.find_element(*Header_locators.PERSONAL_ACCOUNT_LINK).click()
 
         # Явное ожидание появления кнопки конструктор
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//html/body/div/div/header/nav/ul/li[1]/a/p")))
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(*Header_locators.CONSTRUCTOR_LINK)
 
         # нажимаем на кнопку конструктор
-        driver.find_element(By.XPATH, "//html/body/div/div/header/nav/ul/li[1]/a/p").click()
+        driver.find_element(*Header_locators.CONSTRUCTOR_LINK).click()
 
         # нажимаем на кнопку на кнопку личный кабинет
-        driver.find_element(By.XPATH, "//html/body/div/div/header/nav/a/p").click()
+        driver.find_element(*Header_locators.PERSONAL_ACCOUNT_LINK).click()
 
         # нажимаем на логотип
-        driver.find_element(By.XPATH, "//html/body/div/div/header/nav/div").click()
+        driver.find_element(*Header_locators.LOGO_LINC).click()
 
         # Получаем текущий URL
         current_url = driver.current_url
@@ -47,7 +47,6 @@ class TestEnterToConstructor:
         # Ожидаемый URL страницы входа
         expected_url = "https://stellarburgers.nomoreparties.site/"
 
-        # Проверяем, что текущий URL равен ожидаемому URL страницы входа
-        assert current_url == expected_url, "Тест не прошел успешно"
+        # Проверяем, что переход с главной страницы в раздел "Конструктор" осуществлен
+        assert current_url == expected_url
 
-        driver.quit()
